@@ -26,7 +26,10 @@ export default function Dashboard(){
         console.error(err)
       }finally{ setLoading(false) }
     }
-    load()
+    // only load if a token is present (prevents early 401s while auth state is initializing)
+    const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null
+    if (token) load()
+    else setLoading(false)
     return ()=> mounted = false
   },[])
 

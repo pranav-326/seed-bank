@@ -27,3 +27,13 @@ exports.register = async (req, res, next) => {
     next(err);
   }
 };
+
+exports.me = async (req, res, next) => {
+  try {
+    const userId = req.user && req.user.id;
+    if (!userId) return res.status(401).json({ error: true, message: 'Unauthorized' });
+    const [rows] = await pool.query('SELECT id, email, name, role, created_at FROM users WHERE id = ?', [userId]);
+    if (!rows[0]) return res.status(404).json({ error: true, message: 'User not found' });
+    res.json({ success: true, data: rows[0] });
+  } catch (err) { next(err); }
+};

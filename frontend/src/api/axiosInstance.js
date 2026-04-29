@@ -14,4 +14,15 @@ api.interceptors.request.use((config) => {
   return config
 })
 
+// global response handler: redirect to login on 401
+api.interceptors.response.use(
+  res => res,
+  err => {
+    if (err && err.response && err.response.status === 401) {
+      try { localStorage.removeItem('token') } catch(e){}
+      if (typeof window !== 'undefined') window.location.href = '/login'
+    }
+    return Promise.reject(err)
+  }
+)
 export default api
